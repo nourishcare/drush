@@ -184,6 +184,10 @@ function update_main_prepare() {
   // Check the update requirements for Drupal.
   update_check_requirements();
 
+  // Load the full module list again so that hooks can be run during the next
+  // bootstrap phases.
+  module_list(TRUE, TRUE);
+
   // update_fix_d7_requirements() needs to run before bootstrapping beyond path.
   // So bootstrap to DRUPAL_BOOTSTRAP_LANGUAGE then include unicode.inc.
   drupal_bootstrap(DRUPAL_BOOTSTRAP_LANGUAGE);
