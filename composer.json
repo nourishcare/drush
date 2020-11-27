@@ -23,6 +23,8 @@
   },
   "bin": [
     "drush",
+    "drush-batcher",
+    "run-drush-migrations",
     "drush.launcher",
     "drush.php",
     "drush.complete.sh"
