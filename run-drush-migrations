@@ -1,0 +1,13 @@
+#!/bin/bash
+#Runs drush-batcher as part of an automatic migration. Entrypoint to the k8s job
+#Always runs updb --y and can optionally run partial or total cache clears
+#eg: run-drush-migrations all / run-drush-migrations css-js
+
+declare -r CLEAR_CACHES=$1
+if [[ -z "$CLEAR_CACHES" ]] ; then
+    COMMAND="drush updb --y"
+else
+    COMMAND="drush updb --y && drush cc $CLEAR_CACHES"
+fi
+
+drush-batcher -c "$COMMAND" 2>&1

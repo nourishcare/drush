@@ -1,0 +1,49 @@
+#!/bin/bash
+#Run a drush command against all sites in parallel batches
+#eg: drush-batcher.sh -n 20 -x healthmark -x alliancelc -d /var/www/care-planner.co.uk/sites -c "/usr/bin/drush cc all"
+
+bold=$'\e[1m'
+normal=$'\e[0m'
+italic=$'\e[3m'
+
+_usage()
+{
+  cat <<USAGE
+Usage: ${bold}$(basename $0) [-n${normal} ${italic}count${normal}${bold}] [-x${normal} ${italic}exclude1 ${bold}-x${normal} ${italic}exclude2 ${normal}${bold}...] -d${normal} ${italic}targetdir${normal}${bold} -c ${normal}${italic}"command"${normal}
+   eg: $(basename $0) -n 20 -x healthmark -x alliancelc -d /var/www/care-planner.co.uk -c "/usr/bin/drush cc all"
+USAGE
+}
+
+#always ignore the default drupal site
+EXCLUDE=("default")
+
+while getopts n:x:d:c:h option ; do
+ case ${option} in
+ n) MAXJOBS=${OPTARG};;
+ x) EXCLUDE+=("$OPTARG");;
+ d) SITES_DIR=${OPTARG};;
+ c) COMMAND=${OPTARG};;
+ \?)
+  echo "Invalid option: -$OPTARG" >&2
+  usage
+  exit 1
+  ;;
+ h)
+  usage
+  exit 1
+  ;;
+ esac
+done
+shift $((OPTIND-1))
+
+[ -z "$MAXJOBS" ] && MAXJOBS=10
+[ -z "$SITES_DIR" ] && _usage && exit 1
+[ -z "$COMMAND" ] && _usage && exit 1
+
+SITES=($(find "$SITES_DIR" -mindepth 2 -maxdepth 2 -name settings.php -printf '%h\n' | sed 's!.*/!!'))
+for i in "${SITES[@]}" ; do
+  for j in "${EXCLUDE[@]}" ; do
+    echo "$j"
+  done | grep -q $i || echo $i
+done | parallel -j $MAXJOBS --tag "cd ${SITES_DIR}/{} ; ${COMMAND} ;"
+
