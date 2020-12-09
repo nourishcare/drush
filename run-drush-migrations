@@ -11,3 +11,8 @@ else
 fi
 
 drush-batcher -c "$COMMAND" 2>&1
+
+# We always want to exit with a success code, as otherwise this can
+# cause the pod and subsequently CI/CD pipeline to "fail" on errors
+# we don't care about. Any errors we do care about will alert to PagerDuty.
+exit 0
