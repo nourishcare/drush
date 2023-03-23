@@ -153,17 +153,20 @@ function _drush_batch_worker() {
         'finished' => &$finished,
         'message'  => &$task_message,
       );
-      // Magic wrap to catch changes to 'message' key.
-      $batch_context = new DrushBatchContext($batch_context);
 
       // Tolerate recoverable errors.
       // See https://github.com/drush-ops/drush/issues/1930
       $halt_on_error = drush_get_option('halt-on-error', TRUE);
       drush_set_option('halt-on-error', FALSE);
       call_user_func_array($function, array_merge($args, array(&$batch_context)));
+      if (!empty($task_message)) {
+        drush_log(strip_tags($task_message), LogLevel::OK);
+      }
+      if (!empty($batch_context['error_message'])) {
+        drush_set_error('DRUSH_BATCH_ERROR', strip_tags($batch_context['error_message']));
+      }
       drush_set_option('halt-on-error', $halt_on_error);
 
-      $finished = $batch_context['finished'];
       if ($finished >= 1) {
         // Make sure this step is not counted twice when computing $current.
         $finished = 0;
