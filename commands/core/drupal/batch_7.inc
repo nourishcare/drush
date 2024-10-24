@@ -26,8 +26,6 @@ function _drush_backend_batch_process($command, $args, $options) {
     );
     $batch += $process_info;
 
-    $batch['progressive'] = TRUE;
-
     // The batch is now completely built. Allow other modules to make changes
     // to the batch so that it is easier to reuse batch processes in other
     // enviroments.
@@ -37,6 +35,8 @@ function _drush_backend_batch_process($command, $args, $options) {
     // table, since non-progressive batches skip database storage completely.
     $batch['id'] = db_next_id();
     $args[] = $batch['id'];
+
+    $batch['progressive'] = TRUE;
 
     // Move operations to a job queue. Non-progressive batches will use a
     // memory-based queue.
