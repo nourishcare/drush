@@ -40,10 +40,14 @@ shift $((OPTIND-1))
 [ -z "$SITES_DIR" ] && _usage && exit 1
 [ -z "$COMMAND" ] && _usage && exit 1
 
+# Give each site its own drush cache dir. Parallel drush processes sharing
+# one ~/.drush/cache collide when updb clears and recreates the cache bin
+# ("Directory .../cache/default exists, but is not writable"). drush only
+# uses CACHE_PREFIX if it already exists, hence the mkdir.
 SITES=($(find "$SITES_DIR" -mindepth 2 -maxdepth 2 -name settings.php -printf '%h\n' | sed 's!.*/!!'))
 for i in "${SITES[@]}" ; do
   for j in "${EXCLUDE[@]}" ; do
     echo "$j"
   done | grep -q $i || echo $i
-done | parallel -j $MAXJOBS --tag "cd ${SITES_DIR}/{} ; ${COMMAND} ;"
+done | parallel -j $MAXJOBS --tag "cd ${SITES_DIR}/{} ; export CACHE_PREFIX=/tmp/drush-{}; mkdir -p /tmp/drush-{} ; ${COMMAND} && rm -rf /tmp/drush-{} ;"
 
