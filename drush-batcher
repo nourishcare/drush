@@ -49,5 +49,5 @@ for i in "${SITES[@]}" ; do
   for j in "${EXCLUDE[@]}" ; do
     echo "$j"
   done | grep -q $i || echo $i
-done | parallel -j $MAXJOBS --tag "cd ${SITES_DIR}/{} ; export CACHE_PREFIX=/tmp/drush-{}; mkdir -p /tmp/drush-{} ; ${COMMAND} && rm -rf /tmp/drush-{} ;"
+done | parallel -j $MAXJOBS --tag "cd ${SITES_DIR}/{} ; export CACHE_PREFIX=/tmp/drush-{}; mkdir -p /tmp/drush-{} && ${COMMAND} && rm -rf /tmp/drush-{} ;"
 
