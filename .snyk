@@ -1,0 +1,24 @@
+# Snyk (https://snyk.io) policy file
+# Licence issues reviewed against the licence policy on 2026-11-25.
+# Each ignore records why the licence is acceptable and expires so it gets re-reviewed.
+version: v1.25.1
+ignore:
+  'snyk:lic:composer:chi-teck:drupal-code-generator:GPL-2.0':
+    - '*':
+        reason: >-
+          Dependency of Drush. This repo is our GPL-2.0-or-later fork of Drush, run on
+          our own servers. Runs only on our own infrastructure and is never distributed
+          to customers or third parties, so GPL copyleft (which our licence policy
+          treats as a distribution issue) is not triggered.
+        expires: 2027-11-25T00:00:00.000Z
+        created: 2026-11-25T00:00:00.000Z
+  'snyk:lic:composer:webflo:drupal-finder:GPL-2.0':
+    - '*':
+        reason: >-
+          Dependency of Drush. This repo is our GPL-2.0-or-later fork of Drush, run on
+          our own servers. Runs only on our own infrastructure and is never distributed
+          to customers or third parties, so GPL copyleft (which our licence policy
+          treats as a distribution issue) is not triggered.
+        expires: 2027-11-25T00:00:00.000Z
+        created: 2026-11-25T00:00:00.000Z
+patch: {}
